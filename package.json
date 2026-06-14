@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "check:js": "python scripts/check_js_syntax.py"
+    "check:js": "bash -lc 'python3.12 scripts/check_js_syntax.py'"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

@@ -24,6 +24,29 @@ DEFAULT_GLOBS = (
 )
 
 
+def ensure_python_312() -> None:
+    """Run this checker under Python 3.12.
+
+    The vendored tree-sitter wheels in .tools/python are built for CPython 3.12,
+    so some environments may pick an older interpreter by default.
+    """
+
+    if sys.version_info[:2] == (3, 12):
+        return
+
+    print(
+        "This syntax check needs Python 3.12 because .tools/python contains\n"
+        "CPython 3.12 wheels for tree_sitter and tree_sitter_javascript.\n"
+        "Try:\n"
+        "  bash -lc 'python3.12 scripts/check_js_syntax.py'\n"
+        'or reinstall the packages with:\n'
+        '  python3.12 -m pip install --target ".tools/python" '
+        "tree_sitter tree_sitter_javascript",
+        file=sys.stderr,
+    )
+    raise SystemExit(2)
+
+
 def load_parser():
     if LOCAL_SITE.exists():
         sys.path.insert(0, str(LOCAL_SITE))
@@ -33,7 +56,7 @@ def load_parser():
     except ModuleNotFoundError:
         print(
             "Missing parser packages: install them with\n"
-            '  pip install --target "V CLAUDE/Tesis/.tools/python" '
+            '  python3.12 -m pip install --target ".tools/python" '
             "tree_sitter tree_sitter_javascript",
             file=sys.stderr,
         )
@@ -83,6 +106,8 @@ def parse_file(parser, path: pathlib.Path) -> tuple[bool, str | None]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    ensure_python_312()
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "files",
