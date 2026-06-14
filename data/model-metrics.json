@@ -1,0 +1,49 @@
+{
+  "source": "Tesis/Resultados y discusion.md",
+  "test_size": 267,
+  "threshold": 0.5,
+  "models": [
+    {
+      "id": "cnn",
+      "label": "CNN propia",
+      "accuracy_percent": 92.88,
+      "recall": 0.8785,
+      "specificity": 0.9625,
+      "f1": 0.9082,
+      "auc_roc": 0.9577,
+      "latency_ms": 0.651,
+      "fps": 1536.29,
+      "parameters": 1749185,
+      "size_mb": 6.67,
+      "confusion": { "tn": 154, "fp": 6, "fn": 13, "tp": 94 }
+    },
+    {
+      "id": "mobilenet",
+      "label": "MobileNetV2",
+      "accuracy_percent": 76.40,
+      "recall": 0.9813,
+      "specificity": 0.6188,
+      "f1": 0.7692,
+      "auc_roc": 0.9504,
+      "latency_ms": 1.921,
+      "fps": 520.70,
+      "parameters": 2552577,
+      "size_mb": 9.74,
+      "confusion": { "tn": 99, "fp": 61, "fn": 2, "tp": 105 }
+    },
+    {
+      "id": "efficientnet",
+      "label": "EfficientNet-B0",
+      "accuracy_percent": 86.89,
+      "recall": 0.9813,
+      "specificity": 0.7937,
+      "f1": 0.8571,
+      "auc_roc": 0.9850,
+      "latency_ms": 3.109,
+      "fps": 321.60,
+      "parameters": 4336253,
+      "size_mb": 16.54,
+      "confusion": { "tn": 127, "fp": 33, "fn": 2, "tp": 105 }
+    }
+  ]
+}

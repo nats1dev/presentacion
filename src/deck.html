@@ -1,0 +1,679 @@
+<deck-stage width="1920" height="1080">
+
+  <!-- ============ 01 · PORTADA ============ -->
+  <section data-label="Portada">
+    <div class="cover" data-screen-label="Portada">
+      <div class="cover-bg"></div>
+      <div class="cover-scrim"></div>
+      <div class="cover-inner">
+        <div class="cover-top anim anim-1">
+          <div class="cover-uni">Universidad del Valle de Guatemala</div>
+          <div class="cover-fac">Facultad de Ingeniería · Ingeniería Civil Arquitectónica</div>
+        </div>
+        <div class="cover-mid">
+          <div class="kicker anim anim-2" style="color:var(--cover-teal)">Defensa de trabajo de graduación</div>
+          <h1 class="cover-title anim anim-3">
+            Redes neuronales convolucionales para la
+            <b>detección de corrosión</b> en
+            <b>conexiones estructurales de acero</b>
+          </h1>
+          <p class="cover-sub anim anim-4">
+            Estudio comparativo de tres arquitecturas para la clasificación binaria
+            de imágenes de conexiones, con énfasis en el costo de las omisiones.
+          </p>
+        </div>
+        <div class="cover-foot anim anim-5">
+          <div class="cf-block">
+            <span class="cf-lbl">Sustentante</span>
+            <span class="cf-val"><b>Nathaniel Douglas Ernesto Sánchez Vásquez</b></span>
+          </div>
+          <div class="cf-block">
+            <span class="cf-lbl">Asesor</span>
+            <span class="cf-val">MSc. Juan Adolfo Orozco Coloma</span>
+          </div>
+          <div class="cf-block">
+            <span class="cf-lbl">Guatemala</span>
+            <span class="cf-val">Enero · 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 · AGENDA ============ -->
+  <section data-label="Agenda">
+    <div class="slide" data-screen-label="Agenda">
+      <div class="kicker anim anim-1">Contenido</div>
+      <h2 class="title anim anim-2">Ruta de la <b>defensa</b></h2>
+      <div class="agenda grow anim anim-3">
+        <a class="ag-item"><span class="ag-n">01</span><span class="ag-t">El problema de la inspección visual</span></a>
+        <a class="ag-item"><span class="ag-n">02</span><span class="ag-t">Objetivos del estudio</span></a>
+        <a class="ag-item"><span class="ag-n">03</span><span class="ag-t">Marco teórico: CNN y transferencia</span></a>
+        <a class="ag-item"><span class="ag-n">04</span><span class="ag-t">Metodología comparativa</span></a>
+        <a class="ag-item"><span class="ag-n">05</span><span class="ag-t">Banco documental y pipeline</span></a>
+        <a class="ag-item"><span class="ag-n">06</span><span class="ag-t">Resultados y métricas</span></a>
+        <a class="ag-item"><span class="ag-n">07</span><span class="ag-t">El trade-off: omisiones vs. falsas alarmas</span></a>
+        <a class="ag-item"><span class="ag-n">08</span><span class="ag-t">Conclusiones y recomendaciones</span></a>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 03 · EL PROBLEMA ============ -->
+  <section data-label="El problema">
+    <div class="slide center-y" data-screen-label="El problema">
+      <div class="kicker anim anim-1">El problema</div>
+      <h2 class="big-statement anim anim-2">
+        La inspección visual de corrosión depende del
+        <span class="accent-rust">criterio humano</span> y es difícil de
+        <b>estandarizar</b>.
+      </h2>
+      <div class="three-up anim anim-3" style="margin-top:64px;">
+        <div class="tu">
+          <div class="tu-ic">◴</div>
+          <div class="tu-t"><b>Subjetiva</b></div>
+          <div class="tu-d">Dos inspectores pueden clasificar la misma evidencia fotográfica de forma distinta.</div>
+        </div>
+        <div class="tu">
+          <div class="tu-ic">▦</div>
+          <div class="tu-t"><b>Heterogénea</b></div>
+          <div class="tu-d">Iluminación, ángulo, distancia y estado del recubrimiento varían entre capturas.</div>
+        </div>
+        <div class="tu tu-crit">
+          <div class="tu-ic">⚠</div>
+          <div class="tu-t"><b>Costo asimétrico</b></div>
+          <div class="tu-d">Un <span class="accent-rust">falso negativo</span> —corrosión no detectada— compromete la seguridad estructural.</div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 04 · CONTEXTO ============ -->
+  <section data-label="Por qué importa">
+    <div class="slide" data-screen-label="Por qué importa">
+      <div class="kicker anim anim-1">Por qué importa</div>
+      <div class="split grow anim anim-2">
+        <div>
+          <p class="col-lead">
+            Las <b>conexiones</b> son los puntos donde se transfieren las cargas de
+            una estructura de acero. Es ahí donde la <span class="accent-rust">corrosión</span>
+            resulta más peligrosa —y donde la inspección llega primero.
+          </p>
+        </div>
+        <ul class="flist anim anim-3">
+          <li><span class="fi-mark">›</span><span class="fi-body"><b>Punto crítico de carga.</b> El deterioro en una conexión afecta directamente la integridad del conjunto.</span></li>
+          <li><span class="fi-mark">›</span><span class="fi-body"><b>Detección oportuna.</b> Identificar la corrosión a tiempo es clave para el mantenimiento y la seguridad.</span></li>
+          <li><span class="fi-mark">›</span><span class="fi-body"><b>La inspección visual es la primera línea</b> —pero hoy es manual y dependiente del criterio del inspector.</span></li>
+        </ul>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 05 · LA OPORTUNIDAD ============ -->
+  <section data-label="La oportunidad">
+    <div class="slide center-y" data-screen-label="La oportunidad" style="align-items: flex-start">
+      <div class="kicker anim anim-1">La oportunidad</div>
+      <div style="display:flex; align-items:center; gap:60px; margin-top:12px;">
+        <div style="flex:1; min-width:0;">
+          <h2 class="big-statement anim anim-2" style="max-width:30ch; margin-bottom:0;">La visión por computadora puede ofrecer un diagnóstico visual consistente y reproducible como apoyo a la inspección.</h2>
+          <p class="anim anim-3" style="font-size:27px; color:var(--muted); max-width:62ch; margin:34px 0 0; line-height:1.5;">
+            No se trata de reemplazar al especialista, sino de darle una herramienta de
+            priorización que reduzca la variabilidad entre criterios. La pregunta es
+            <b style="color:var(--ink);">qué arquitectura</b> resuelve mejor ese papel.
+          </p>
+        </div>
+        <div class="anim anim-4" style="flex:0 0 auto;">
+          <img src="uploads/Warning.gif" alt="Indicador de peligro" style="width: 400px; border-radius: 0px; box-shadow: 0 8px 32px rgba(0,0,0,.18); object-fit: cover">
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 06 · OBJETIVOS ============ -->
+  <section data-label="Objetivos">
+    <div class="slide" data-screen-label="Objetivos">
+      <div class="kicker anim anim-1">Objetivos</div>
+      <div class="obj-grid grow">
+        <div class="obj-general anim anim-2">
+          <div class="obj-tag">Objetivo general</div>
+          <p class="obj-gen-text">
+            <b>Evaluar comparativamente</b> el desempeño de arquitecturas de redes
+            neuronales convolucionales para la <b>detección binaria de corrosión</b>
+            en conexiones estructurales de acero, a partir del análisis de imágenes.
+          </p>
+        </div>
+        <div class="obj-specs anim anim-3">
+          <div class="obj-tag">Objetivos específicos</div>
+          <ol class="obj-list">
+            <li><b>Caracterizar</b> el conjunto de datos: distribución de clases y organización del banco.</li>
+            <li><b>Establecer</b> el pipeline de preprocesamiento y aumento de datos.</li>
+            <li><b>Comparar</b> arquitecturas CNN para identificar la más adecuada.</li>
+            <li><b>Evaluar</b> el desempeño predictivo y computacional sobre el test oficial.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 07 · JUSTIFICACIÓN ============ -->
+  <section data-label="Justificación">
+    <div class="slide" data-screen-label="Justificación">
+      <div class="kicker anim anim-1">Justificación</div>
+      <h2 class="title anim anim-2" style="margin-bottom:8px;">¿Por qué <b>comparar</b>?</h2>
+      <div class="pillars anim anim-3">
+        <div class="pillar">
+          <div class="pillar-n">01</div>
+          <div class="pillar-t">Decisión multicriterio</div>
+          <div class="pillar-d">La «mejor» arquitectura cambia según el costo relativo de omisiones, falsas alarmas y latencia.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-n">02</div>
+          <div class="pillar-t">Protocolo reproducible</div>
+          <div class="pillar-d">Un marco auditado y homogéneo permite replicar y extender la evaluación sobre nuevos datos.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-n">03</div>
+          <div class="pillar-t">Eficiencia real</div>
+          <div class="pillar-d">El costo computacional es decisivo para llevar el modelo a un entorno de inspección práctico.</div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 07b · CONTEXTO GUATEMALA ============ -->
+  <section data-label="Contexto Guatemala">
+    <div class="slide center-y" data-screen-label="Contexto Guatemala">
+      <div class="kicker anim anim-1">Contexto real</div>
+      <h2 class="big-statement anim anim-2" style="max-width:34ch; font-size:54px;">
+        En Guatemala, la <span class="accent-rust">ausencia de mantenimiento</span> periódico ya tiene consecuencias documentadas.
+      </h2>
+      <div style="display:flex; gap:48px; margin-top:40px;" class="anim anim-3">
+        <div style="flex:1; min-width:0;">
+          <p style="font-size:27px; color:var(--muted); line-height:1.6; max-width:52ch;">
+            El <b style="color:var(--ink)">puente sobre el Río Dulce</b> (1977–1980) acumula daños
+            calificados como <b style="color:var(--rust)">«severos»</b> por la CONRED en informes
+            de 2017, 2022 y 2024. No se ha ejecutado un plan permanente de mantenimiento;
+            el CIV evalúa la necesidad de construir un paso alterno.
+          </p>
+          <p style="font-size:24px; color:var(--muted); line-height:1.5; max-width:52ch; margin-top:24px;">
+            El sector construcción se caracteriza por una <b style="color:var(--ink)">adopción tecnológica lenta</b>,
+            lo que contrasta con el avance de la IA. Esta brecha es una oportunidad para integrar
+            herramientas computacionales en la evaluación estructural.
+          </p>
+        </div>
+        <div style="flex:0 0 auto; display:flex; flex-direction:column; gap:18px;">
+          <div style="background:var(--card); border-radius:14px; padding:28px 32px; min-width:320px;">
+            <div style="font-family:var(--font-mono); font-size:15px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:8px;">El problema recurrente</div>
+            <div style="font-size:23px; color:var(--ink); line-height:1.4;">Ausencia de evaluaciones periódicas sobre recubrimientos anticorrosivos en elementos metálicos</div>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:28px 32px; min-width:320px;">
+            <div style="font-family:var(--font-mono); font-size:15px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:8px;">Lo que se necesita</div>
+            <div style="font-size:23px; color:var(--ink); line-height:1.4;">Inspección no destructiva, sistemática, objetiva y replicable</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 08 · MARCO TEÓRICO CNN ============ -->
+  <section data-label="Marco teórico">
+    <div class="slide" data-screen-label="Marco teórico">
+      <div class="kicker anim anim-1">Marco teórico</div>
+      <h2 class="title anim anim-2" style="margin-bottom:8px;">¿Cómo «ve» una <b>CNN</b>?</h2>
+      <div class="grow anim anim-3" data-widget="cnn"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 08b · CONVOLUCIÓN INTERACTIVA ============ -->
+  <section data-label="Convolución">
+    <div class="slide" data-screen-label="Convolución interactiva">
+      <div class="kicker anim anim-1">Marco teórico · Convolución</div>
+      <h2 class="title anim anim-2" style="font-size:52px; max-width:none; margin-bottom:14px;">El kernel <b>desliza</b> sobre la imagen — así nacen las <b>características</b></h2>
+      <div class="conv grow anim anim-3" data-widget="conv"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 09 · ARQUITECTURAS ============ -->
+  <section data-label="Arquitecturas">
+    <div class="slide" data-screen-label="Arquitecturas">
+      <div class="kicker anim anim-1">Las tres arquitecturas</div>
+      <h2 class="title anim anim-2" style="margin-bottom:8px;">Tres caminos al mismo <b>diagnóstico</b></h2>
+      <div class="arch anim anim-3">
+        <div class="arch-card is-own">
+          <div class="arch-name">CNN propia</div>
+          <div class="arch-kind">Entrenada desde cero</div>
+          <div class="arch-desc">Red diseñada específicamente para esta tarea. La más compacta de las tres.</div>
+          <div class="arch-specs">
+            <div class="arch-spec"><span class="as-k">Parámetros</span><span class="as-v">1.75 M</span></div>
+            <div class="arch-spec"><span class="as-k">Tamaño</span><span class="as-v">6.67 MB</span></div>
+            <div class="arch-spec"><span class="as-k">Origen</span><span class="as-v">Desde cero</span></div>
+          </div>
+        </div>
+        <div class="arch-card is-mob">
+          <div class="arch-name">MobileNetV2</div>
+          <div class="arch-kind">Transferencia de aprendizaje</div>
+          <div class="arch-desc">Arquitectura eficiente pensada para dispositivos móviles, afinada a la tarea.</div>
+          <div class="arch-specs">
+            <div class="arch-spec"><span class="as-k">Parámetros</span><span class="as-v">2.55 M</span></div>
+            <div class="arch-spec"><span class="as-k">Tamaño</span><span class="as-v">9.74 MB</span></div>
+            <div class="arch-spec"><span class="as-k">Origen</span><span class="as-v">ImageNet</span></div>
+          </div>
+        </div>
+        <div class="arch-card is-eff">
+          <div class="arch-name">EfficientNet-B0</div>
+          <div class="arch-kind">Transferencia de aprendizaje</div>
+          <div class="arch-desc">Escalado compuesto de profundidad, ancho y resolución. La más profunda.</div>
+          <div class="arch-specs">
+            <div class="arch-spec"><span class="as-k">Parámetros</span><span class="as-v">4.34 M</span></div>
+            <div class="arch-spec"><span class="as-k">Tamaño</span><span class="as-v">16.54 MB</span></div>
+            <div class="arch-spec"><span class="as-k">Origen</span><span class="as-v">ImageNet</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 10 · METODOLOGÍA ============ -->
+  <section data-label="Metodología">
+    <div class="slide" data-screen-label="Metodología">
+      <div class="kicker anim anim-1">Metodología</div>
+      <div class="split split-narrow grow anim anim-2">
+        <div>
+          <p class="col-lead">
+            Un enfoque <b>cuantitativo, aplicado y comparativo</b>: misma cancha
+            para las tres arquitecturas, para que las diferencias sean del
+            <span class="accent-teal">modelo</span>, no del protocolo.
+          </p>
+        </div>
+        <ul class="flist anim anim-3">
+          <li><span class="fi-mark">›</span><span class="fi-body"><b>Variable independiente:</b> la arquitectura CNN (propia, MobileNetV2, EfficientNet-B0).</span></li>
+          <li><span class="fi-mark">›</span><span class="fi-body"><b>Variables dependientes:</b> desempeño de clasificación, eficiencia computacional e interpretabilidad visual.</span></li>
+          <li><span class="fi-mark">›</span><span class="fi-body"><b>Protocolo homogéneo:</b> mismo preprocesamiento, aumento, configuración y conjunto oficial de prueba.</span></li>
+        </ul>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 11 · BANCO DOCUMENTAL ============ -->
+  <section data-label="Banco documental">
+    <div class="slide" data-screen-label="Banco documental">
+      <div class="kicker anim anim-1">Banco documental</div>
+      <h2 class="title anim anim-2" style="margin-bottom:30px;">Un split <b>auditado</b>, sin fugas</h2>
+      <div class="ds-top anim anim-3">
+        <div class="ds-hero">
+          <span class="dsh-num">2,667</span>
+          <span class="dsh-lbl">imágenes en total</span>
+        </div>
+        <div class="ds-split">
+          <div class="ds-bar">
+            <div class="ds-seg s-train"><span class="seg-n">2,133</span><span class="seg-l">Entrenamiento</span></div>
+            <div class="ds-seg s-val"><span class="seg-n">267</span><span class="seg-l">Validación</span></div>
+            <div class="ds-seg s-test"><span class="seg-n">267</span><span class="seg-l">Prueba</span></div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:16px; color:var(--faint); margin-top:4px;">
+            Control de duplicados por hash · sin solapamiento entre particiones
+          </div>
+        </div>
+      </div>
+      <div class="ds-test anim anim-4">
+        <div class="ds-test-h">Composición del conjunto de prueba · 267 imágenes</div>
+        <div class="ds-test-bar">
+          <div class="tb-pos">107 <span class="mono">con corrosión</span></div>
+          <div class="tb-neg">160 <span class="mono">sin corrosión</span></div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 12 · PIPELINE (widget) ============ -->
+  <section data-label="Pipeline">
+    <div class="slide" data-screen-label="Pipeline">
+      <div class="kicker anim anim-1">Pipeline metodológico</div>
+      <h2 class="title anim anim-2" style="margin-bottom:12px;">Del repositorio a la <b>evaluación</b></h2>
+      <div class="pl grow anim anim-3" data-widget="pipeline"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 13 · CONDICIONES CONTROLADAS ============ -->
+  <section data-label="Condiciones">
+    <div class="slide" data-screen-label="Condiciones">
+      <div class="kicker anim anim-1">Condiciones controladas</div>
+      <h2 class="title anim anim-2" style="margin-bottom:12px;">La misma <b>cancha</b> para todos</h2>
+      <div class="specs anim anim-3">
+        <div class="spec-card"><div class="spec-k">Resolución de entrada</div><div class="spec-v">224×224 <small>px</small></div></div>
+        <div class="spec-card"><div class="spec-k">Normalización</div><div class="spec-v">ImageNet</div></div>
+        <div class="spec-card"><div class="spec-k">Semilla global</div><div class="spec-v">42</div></div>
+        <div class="spec-card"><div class="spec-k">Optimizador</div><div class="spec-v">Adam</div></div>
+        <div class="spec-card"><div class="spec-k">Función de pérdida</div><div class="spec-v">BCELoss</div></div>
+        <div class="spec-card"><div class="spec-k">Umbral operativo</div><div class="spec-v">0.50</div></div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 14 · MÉTRICAS DE EVALUACIÓN ============ -->
+  <section data-label="Métricas">
+    <div class="slide" data-screen-label="Métricas">
+      <div class="kicker anim anim-1">Métricas de evaluación</div>
+      <h2 class="title anim anim-2" style="margin-bottom:12px;">Qué medimos —y <b>por qué</b></h2>
+      <div class="why anim anim-3">
+        <div class="why-row"><span class="why-name">Exactitud</span><span class="why-desc">Proporción de aciertos. Engañosa cuando las clases están desbalanceadas.</span></div>
+        <div class="why-row"><span class="why-name">Recall</span><span class="why-desc">¿Cuánta corrosión real se detecta? Penaliza los <span class="accent-rust">falsos negativos</span>.</span></div>
+        <div class="why-row"><span class="why-name">Especificidad</span><span class="why-desc">¿Cuántos casos sanos se confirman? Penaliza las falsas alarmas.</span></div>
+        <div class="why-row"><span class="why-name">F1</span><span class="why-desc">Balance entre precisión y recall en un solo número.</span></div>
+        <div class="why-row"><span class="why-name">AUC-ROC</span><span class="why-desc">Capacidad de discriminar, independiente del umbral elegido.</span></div>
+        <div class="why-row"><span class="why-name">Latencia · FPS</span><span class="why-desc">Costo computacional de la inferencia en operación.</span></div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 15 · RESULTADOS MÉTRICAS (widget) ============ -->
+  <section data-label="Resultados">
+    <div class="slide" data-screen-label="Resultados">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:30px;">
+        <div>
+          <div class="kicker anim anim-1">Resultados · test oficial</div>
+          <h2 class="title anim anim-2" style="margin-top:18px;">Comparación de <b>métricas</b></h2>
+        </div>
+        <div class="tag anim anim-2"><span class="dot"></span>267 imágenes de prueba</div>
+      </div>
+      <div class="mc grow anim anim-3" data-widget="metrics" style="margin-top:28px;"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 16 · CURVA ROC (widget) ============ -->
+  <section data-label="Curva ROC">
+    <div class="slide" data-screen-label="Curva ROC">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:30px;">
+        <div>
+          <div class="kicker anim anim-1">Curva ROC</div>
+          <h2 class="title anim anim-2" style="margin-top:18px;">Discriminación a <b>todo umbral</b></h2>
+        </div>
+        <div class="tag anim anim-2"><span class="dot"></span>EfficientNet-B0 lidera el AUC</div>
+      </div>
+      <div class="roc grow anim anim-3" data-widget="roc" style="margin-top:18px;"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 17 · MATRICES DE CONFUSIÓN (widget) ============ -->
+  <section data-label="Matrices de confusión">
+    <div class="slide" data-screen-label="Matrices de confusión">
+      <div class="kicker anim anim-1">Matrices de confusión</div>
+      <h2 class="title anim anim-2" style="margin-bottom:18px;">Dónde acierta —y dónde <b>falla</b></h2>
+      <div class="cmx grow anim anim-3" data-widget="confusion"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 18 · SIMULADOR DE UMBRAL (widget) ============ -->
+  <section data-label="Simulador de umbral">
+    <div class="slide" data-screen-label="Simulador de umbral">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:30px;">
+        <div>
+          <div class="kicker anim anim-1">El trade-off</div>
+          <h2 class="title anim anim-2" style="margin-top:14px;"><span class="accent-rust">Omisiones</span> vs. falsas alarmas</h2>
+        </div>
+      </div>
+      <div class="ts grow anim anim-3" data-widget="threshold" style="margin-top:14px;"></div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 19 · EFICIENCIA COMPUTACIONAL ============ -->
+  <section data-label="Eficiencia">
+    <div class="slide" data-screen-label="Eficiencia">
+      <div class="kicker anim anim-1">Eficiencia computacional</div>
+      <h2 class="title anim anim-2" style="margin-bottom:24px;">El costo de <b>cada predicción</b></h2>
+      <div class="eff anim anim-3">
+        <div class="eff-head">
+          <span>Modelo</span><span>ms / imagen</span><span>FPS (GPU)</span><span>Parámetros</span><span>Tamaño</span>
+        </div>
+        <div class="eff-row">
+          <span class="er-model"><span class="sw" style="background:var(--c-cnn)"></span>CNN propia</span>
+          <span class="er-v er-best">0.651</span><span class="er-v er-best">1,536</span><span class="er-v er-best">1.75 M</span><span class="er-v er-best">6.67 MB</span>
+        </div>
+        <div class="eff-row">
+          <span class="er-model"><span class="sw" style="background:var(--c-mobilenet)"></span>MobileNetV2</span>
+          <span class="er-v">1.921</span><span class="er-v">521</span><span class="er-v">2.55 M</span><span class="er-v">9.74 MB</span>
+        </div>
+        <div class="eff-row">
+          <span class="er-model"><span class="sw" style="background:var(--c-efficientnet)"></span>EfficientNet-B0</span>
+          <span class="er-v">3.109</span><span class="er-v">322</span><span class="er-v">4.34 M</span><span class="er-v">16.54 MB</span>
+        </div>
+      </div>
+      <p class="eff-note anim anim-4">La CNN propia es <b>~4.8× más rápida</b> que EfficientNet-B0 y la más ligera de las tres.</p>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 20 · COCHRAN Q · MÉTODO ============ -->
+  <section data-label="Cochran Q · Método">
+    <div class="slide" data-screen-label="Cochran Q · Método">
+      <div class="kicker anim anim-1">Contraste estadístico · Método</div>
+      <h2 class="title anim anim-2" style="margin-bottom:16px;">Prueba Q de Cochran — <b>¿cómo funciona?</b></h2>
+      <div style="display:flex; gap:36px; flex:1;" class="anim anim-3">
+        <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">¿Qué es?</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Prueba <b style="color:var(--ink)">no paramétrica</b> para comparar proporciones de acierto
+              de <b style="color:var(--ink)">k tratamientos relacionados</b> con resultado
+              <b style="color:var(--ink)">binario</b> (acierto/error). Extensión de McNemar a k > 2.
+            </p>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">¿Por qué aquí?</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Las mismas <b style="color:var(--ink)">267 imágenes</b> son clasificadas por las
+              <b style="color:var(--ink)">3 arquitecturas</b>. Para cada imagen: acertó (1) o falló (0).
+              Tabla de 267 filas × 3 columnas — el diseño que Cochran Q requiere.
+            </p>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Post-hoc</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Si Q es significativa → comparaciones <b style="color:var(--ink)">McNemar por pares</b>
+              con corrección de <b style="color:var(--ink)">Bonferroni</b> (α/3 = 0.0167)
+              para controlar el error tipo I.
+            </p>
+          </div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Hipótesis</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              <b style="color:var(--ink)">H₀:</b> las tres arquitecturas tienen la misma proporción de acierto.
+            </p>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45; margin-top:6px;">
+              <b style="color:var(--ink)">H₁:</b> al menos una difiere significativamente.
+            </p>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Mecánica del estadístico</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Q compara los <b style="color:var(--ink)">totales de aciertos por modelo</b> (G<sub>j</sub>)
+              contra lo esperado bajo H₀, ponderado por cuántos modelos acertaron cada imagen (L<sub>i</sub>).
+            </p>
+            <div style="background:rgba(0,0,0,.06); border-radius:10px; padding:14px 18px; margin-top:10px; font-family:var(--font-mono); font-size:19px; color:var(--ink); text-align:center; line-height:1.6;">
+              Q = (k−1) · [ k·ΣG<sub>j</sub>² − T² ] / [ k·T − ΣL<sub>i</sub>² ]<br>
+              <span style="font-size:15px; color:var(--faint);">Bajo H₀, Q ~ χ²(k−1) = χ²(2)</span>
+            </div>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Limitación clave</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Evalúa exactitud global con <b style="color:var(--rust)">costo simétrico</b>.
+              No determina cuál modelo es <b style="color:var(--ink)">operativamente más seguro</b>.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 20b · CONTRASTE ESTADÍSTICO · RESULTADOS ============ -->
+  <section data-label="Contraste · Resultados">
+    <div class="slide" data-screen-label="Contraste · Resultados">
+      <div class="kicker anim anim-1">Contraste estadístico · Resultados</div>
+      <h2 class="title anim anim-2" style="margin-bottom:24px;">¿Las diferencias son <b>reales</b>?</h2>
+      <div class="stat-grid anim anim-3">
+        <div class="stat-q">
+          <div class="sq-k">Q de Cochran</div>
+          <div class="sq-v">36.29</div>
+          <div class="sq-p">p = 1.316 × 10⁻⁸ · <b style="color:var(--rust)">Se rechaza H₀</b></div>
+        </div>
+        <ul class="posthoc">
+          <li><span class="ph-pair"><b>CNN propia</b> ↔ <b>MobileNetV2</b></span><span class="ph-detail">80 discordantes · p = 0.000002</span><span class="ph-badge ph-yes">Significativa</span></li>
+          <li><span class="ph-pair"><b>MobileNetV2</b> ↔ <b>EfficientNet-B0</b></span><span class="ph-detail">52 discordantes · p = 0.000002</span><span class="ph-badge ph-yes">Significativa</span></li>
+          <li><span class="ph-pair"><b>CNN propia</b> ↔ <b>EfficientNet-B0</b></span><span class="ph-detail">32 discordantes · p = 0.0375</span><span class="ph-badge ph-no">No significativa · α/3 = 0.0167</span></li>
+        </ul>
+      </div>
+      <p class="eff-note anim anim-4">La exactitud global <b>no separa</b> a la CNN propia de EfficientNet-B0. La selección debe basarse en el <b>criterio técnico priorizado</b>: costo de omisiones vs. falsas alarmas vs. latencia.</p>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 21 · INTERPRETABILIDAD ============ -->
+  <section data-label="Interpretabilidad">
+    <div class="slide" data-screen-label="Interpretabilidad">
+      <div class="kicker anim anim-1">Interpretabilidad · GradCAM++</div>
+      <h2 class="title anim anim-2" style="margin-bottom:22px;">¿Mira el modelo <b>la corrosión</b>?</h2>
+      <div class="gc-row anim anim-3">
+        <div class="gc-item">
+          <image-slot id="gradcam-cnn" shape="rounded" radius="14" placeholder="Arrastra GradCAM++ · CNN propia"></image-slot>
+          <div class="gc-cap"><b>CNN propia</b> · mapa de activación</div>
+        </div>
+        <div class="gc-item">
+          <image-slot id="gradcam-mobilenet" shape="rounded" radius="14" placeholder="Arrastra GradCAM++ · MobileNetV2"></image-slot>
+          <div class="gc-cap"><b>MobileNetV2</b> · mapa de activación</div>
+        </div>
+        <div class="gc-item">
+          <image-slot id="gradcam-efficientnet" shape="rounded" radius="14" placeholder="Arrastra GradCAM++ · EfficientNet-B0"></image-slot>
+          <div class="gc-cap"><b>EfficientNet-B0</b> · mapa de activación</div>
+        </div>
+      </div>
+      <p class="gc-note anim anim-4"><b>Trazabilidad auxiliar, no causalidad.</b> GradCAM++ permite revisar si las activaciones coinciden con zonas de deterioro, pero no es una explicación causal ni una validación espacial del daño.</p>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 22 · DISCUSIÓN ============ -->
+  <section data-label="Discusión">
+    <div class="slide" data-screen-label="Discusión">
+      <div class="kicker anim anim-1">Discusión</div>
+      <h2 class="big-statement anim anim-2" style="font-size:54px; max-width:34ch;">
+        No existe un modelo <b>universalmente superior</b>: depende del costo que más pese.
+      </h2>
+      <div class="balance anim anim-3">
+        <div class="bal-card bal-cnn">
+          <div class="bal-name"><span class="sw" style="background:var(--c-cnn)"></span>CNN propia</div>
+          <div class="bal-when">Si priorizas exactitud, eficiencia y simplicidad</div>
+          <ul class="bal-list">
+            <li>Mayor <b>exactitud (92.88%)</b>, F1 (0.908) y especificidad (0.962)</li>
+            <li>El <b>menor costo</b>: 0.651 ms/img y 6.67 MB</li>
+            <li>Pero <b class="accent-rust">13 falsos negativos</b> de 107 positivos</li>
+          </ul>
+        </div>
+        <div class="bal-card bal-eff">
+          <div class="bal-name"><span class="sw" style="background:var(--c-efficientnet)"></span>EfficientNet-B0</div>
+          <div class="bal-when">Si priorizas minimizar omisiones de corrosión</div>
+          <ul class="bal-list">
+            <li>Solo <b>2 falsos negativos</b> (recall 0.981)</li>
+            <li>Mayor <b>AUC-ROC (0.985)</b></li>
+            <li>Menos falsas alarmas que MobileNetV2 (<b>33 vs. 61</b>), a mayor costo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 23 · CONCLUSIONES ============ -->
+  <section data-label="Conclusiones">
+    <div class="slide" data-screen-label="Conclusiones">
+      <div class="kicker anim anim-1">Conclusiones</div>
+      <ol class="concl grow anim anim-2">
+        <li>La visión por computadora aporta como <b>herramienta auxiliar de cribado</b>, no como sustituto del criterio profesional. La evidencia corresponde al mismo dominio documental; <b>no es validación operacional en campo</b>.</li>
+        <li><b>No hay un modelo universalmente superior.</b> La CNN propia lideró exactitud (92.88%), F1 (0.908) y eficiencia (0.651 ms/img). EfficientNet-B0 lideró AUC-ROC (0.985) y empató en recall (0.981) con solo 2 falsos negativos.</li>
+        <li>La <b>Q de Cochran</b> confirmó diferencias significativas (p = 1.3 × 10⁻⁸), pero la comparación CNN propia ↔ EfficientNet-B0 <b>no alcanzó significancia</b> tras corrección de Bonferroni.</li>
+        <li><b>GradCAM++</b> aportó trazabilidad interpretativa auxiliar, pero no constituye explicación causal ni validación espacial del daño.</li>
+        <li>La contribución central es un <b>protocolo comparativo reproducible</b>: auditoría del dataset, partición controlada, métricas, contraste estadístico, benchmark e interpretabilidad.</li>
+        <li><b>Alcance limitado:</b> conjunto reducido, sin validación externa, sin multisemilla, sin ablación. Tarea binaria — no estima severidad ni extensión del daño.</li>
+      </ol>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 24 · RECOMENDACIONES / LIMITACIONES / FUTURO ============ -->
+  <section data-label="Recomendaciones">
+    <div class="slide" data-screen-label="Recomendaciones">
+      <div class="kicker anim anim-1">Cierre del estudio</div>
+      <h2 class="title anim anim-2" style="margin-bottom:26px;">Recomendaciones, límites y <b>futuro</b></h2>
+      <div class="rlf anim anim-3">
+        <div class="rlf-col">
+          <h3>Recomendaciones</h3>
+          <ul>
+            <li>Considerar EfficientNet-B0 cuando el criterio sea maximizar la sensibilidad.</li>
+            <li>Usar la IA solo como alerta temprana; verificación profesional obligatoria.</li>
+            <li>Validar con imágenes externas en condiciones reales de inspección.</li>
+          </ul>
+        </div>
+        <div class="rlf-col is-lim">
+          <h3>Limitaciones</h3>
+          <ul>
+            <li>Conjunto de prueba reducido y sin validación externa.</li>
+            <li>Sin campaña multisemilla ni análisis de ablación.</li>
+            <li>Tarea binaria: no estima severidad ni extensión del daño.</li>
+          </ul>
+        </div>
+        <div class="rlf-col">
+          <h3>Trabajo futuro</h3>
+          <ul>
+            <li>Detección con bounding boxes o segmentación semántica.</li>
+            <li>Calibración de umbrales y costos asimétricos.</li>
+            <li>Validación cruzada y pruebas de robustez visual.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
+
+  <!-- ============ 25 · CIERRE ============ -->
+  <section data-label="Gracias">
+    <div class="closing" data-screen-label="Gracias">
+      <div class="closing-bg"></div>
+      <div class="closing-scrim"></div>
+      <div class="closing-inner">
+        <div class="closing-kicker anim anim-1">Defensa de tesis</div>
+        <h2 class="closing-title anim anim-2">Gracias.<br><b>Preguntas</b> del tribunal</h2>
+        <p class="closing-sub anim anim-3">
+          Redes neuronales convolucionales para la detección de corrosión
+          en conexiones estructurales de acero.
+        </p>
+        <div class="closing-meta anim anim-4">
+          <div><div class="cm-l">Sustentante</div><div class="cm-v">Nathaniel D. E. Sánchez Vásquez</div></div>
+          <div><div class="cm-l">Asesor</div><div class="cm-v">MSc. Juan Adolfo Orozco Coloma</div></div>
+          <div><div class="cm-l">Universidad del Valle de Guatemala</div><div class="cm-v">Enero · 2026</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>

@@ -1,0 +1,398 @@
+/* ============================================================
+   Defensa de tesis — Detección de corrosión con CNN
+   Sistema visual: técnico-moderno · teal/grafito · acento óxido
+   Tipografía: Bookman (URW Bookman L embebida + fallback sistema)
+   ============================================================ */
+
+/* ---- Fuente Bookman ---- */
+@font-face {
+  font-family: "Bookman Deck";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/rschroll/beru@master/html/fonts/URW%20Bookman%20L.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Bookman Deck";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/rschroll/beru@master/html/fonts/URW%20Bookman%20L%20Italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Bookman Deck";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/rschroll/beru@master/html/fonts/URW%20Bookman%20L%20Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Bookman Deck";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/rschroll/beru@master/html/fonts/URW%20Bookman%20L%20Bold%20Italic.ttf") format("truetype");
+}
+
+/* ---- Tokens ---- */
+:root {
+  --font-serif: "Bookman Deck", "Bookman Old Style", "URW Bookman L", "Bookman", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+
+  /* Neutros — claro */
+  --bg: #eef0ee;
+  --bg-2: #e4e7e4;
+  --surface: #fbfcfb;
+  --surface-2: #f3f5f3;
+  --ink: #181c1b;
+  --ink-soft: #3c4341;
+  --muted: #6a716e;
+  --faint: #98a09c;
+  --line: #d3d8d4;
+  --line-strong: #bcc3bd;
+
+  /* Acento teal/petróleo */
+  --teal: #0f766b;
+  --teal-deep: #0a574f;
+  --teal-soft: #d4e7e3;
+  --teal-ink: #0a574f;
+
+  /* Acento óxido — reservado para corrosión / lo crítico (FN) */
+  --rust: #b1542a;
+  --rust-deep: #8c3f1d;
+  --rust-soft: #f0ddd0;
+
+  /* Modelos */
+  --c-cnn: #0f766b;
+  --c-mobilenet: #c79023;
+  --c-efficientnet: #3b6ea5;
+
+  --shadow: 0 1px 2px rgba(20,28,26,.06), 0 8px 28px rgba(20,28,26,.07);
+  --shadow-lg: 0 2px 6px rgba(20,28,26,.08), 0 24px 60px rgba(20,28,26,.12);
+
+  --pad: 92px;
+
+  /* Animation control */
+  --anim-dur: .62s;
+  --anim-ease: cubic-bezier(.16,.84,.3,1);
+}
+
+[data-theme="dark"] {
+  --bg: #111517;
+  --bg-2: #0c0f10;
+  --surface: #1a1f21;
+  --surface-2: #20262a;
+  --ink: #edf1ef;
+  --ink-soft: #c4ccc8;
+  --muted: #8c958f;
+  --faint: #69726d;
+  --line: #2b3236;
+  --line-strong: #3a4247;
+
+  --teal: #44bdae;
+  --teal-deep: #2c8e82;
+  --teal-soft: #18302e;
+  --teal-ink: #7fd6cb;
+
+  --rust: #df8957;
+  --rust-deep: #c06738;
+  --rust-soft: #2e1d13;
+
+  --c-cnn: #44bdae;
+  --c-mobilenet: #d6a64a;
+  --c-efficientnet: #6f9fd0;
+
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 34px rgba(0,0,0,.45);
+  --shadow-lg: 0 2px 8px rgba(0,0,0,.5), 0 28px 70px rgba(0,0,0,.6);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg-2);
+  font-family: var(--font-serif);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+deck-stage:not(:defined) { visibility: hidden; }
+
+/* ---- Slide base ---- */
+deck-stage section {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  overflow: hidden;
+  transition: background .4s ease, color .4s ease;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: var(--pad);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Chrome: kicker, footer, number ---- */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.kicker::before {
+  content: "";
+  width: 30px;
+  height: 2px;
+  background: var(--teal);
+  display: inline-block;
+}
+
+.foot {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: .08em;
+  color: var(--faint);
+  text-transform: uppercase;
+}
+.foot .foot-title { color: var(--muted); }
+.foot .foot-num b { color: var(--ink-soft); font-weight: 700; }
+
+/* ---- Headings ---- */
+h1, h2, h3 { margin: 0; font-weight: 400; line-height: 1.04; letter-spacing: -.01em; }
+.title {
+  font-size: 72px;
+  line-height: 1.05;
+  letter-spacing: -.015em;
+  margin-top: 26px;
+  max-width: 24ch;
+}
+.title b { font-weight: 700; }
+.lead {
+  font-size: 33px;
+  line-height: 1.42;
+  color: var(--ink-soft);
+  max-width: 30ch;
+}
+.lead b { font-weight: 700; color: var(--ink); }
+strong, b { font-weight: 700; }
+em { font-style: italic; }
+
+.accent-teal { color: var(--teal); }
+.accent-rust { color: var(--rust); }
+
+/* ---- Generic helpers ---- */
+.row { display: flex; }
+.grow { flex: 1; min-height: 0; }
+.center-y { display: flex; flex-direction: column; justify-content: center; }
+.mono { font-family: var(--font-mono); }
+
+/* tag / chip */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  letter-spacing: .04em;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.tag .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); }
+
+/* card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 34px 36px;
+  box-shadow: var(--shadow);
+}
+
+/* ---- Entrance animation ---- */
+@media (prefers-reduced-motion: no-preference) {
+  [data-deck-active] .anim {
+    animation: rise var(--anim-dur) var(--anim-ease) both;
+  }
+  [data-deck-active] .anim-1 { animation-delay: .05s; }
+  [data-deck-active] .anim-2 { animation-delay: .14s; }
+  [data-deck-active] .anim-3 { animation-delay: .23s; }
+  [data-deck-active] .anim-4 { animation-delay: .32s; }
+  [data-deck-active] .anim-5 { animation-delay: .41s; }
+  [data-deck-active] .anim-6 { animation-delay: .50s; }
+  [data-deck-active] .anim-7 { animation-delay: .59s; }
+
+  /* ── Variantes de animación (usan longhand para preservar
+        animation-delay de .anim-N — no pisar el stagger) ── */
+  body[data-anim-type="fade"] [data-deck-active] .anim {
+    animation-name: anim-fade;
+    animation-duration: var(--anim-dur);
+    animation-timing-function: ease;
+    animation-fill-mode: both;
+  }
+  body[data-anim-type="scale"] [data-deck-active] .anim {
+    animation-name: anim-scale;
+    animation-duration: var(--anim-dur);
+    animation-timing-function: var(--anim-ease);
+    animation-fill-mode: both;
+  }
+  body[data-anim-type="slide"] [data-deck-active] .anim {
+    animation-name: anim-slide;
+    animation-duration: var(--anim-dur);
+    animation-timing-function: var(--anim-ease);
+    animation-fill-mode: both;
+  }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes anim-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes anim-scale {
+  from { opacity: 0; transform: scale(.93) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+@keyframes anim-slide {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ============================================================
+   VELOCIDAD DE ANIMACIÓN
+   ============================================================ */
+body[data-anim-speed="fast"] { --anim-dur: .25s; }
+body[data-anim-speed="slow"] { --anim-dur: 1.1s;  }
+
+/* ============================================================
+   DENSIDAD — escala el padding
+   ============================================================ */
+body[data-density="compact"]  { --pad: 60px; }
+body[data-density="spacious"] { --pad: 120px; }
+
+/* ============================================================
+   ACENTO — reemplaza tokens teal
+   ============================================================ */
+body[data-accent="azul"] {
+  --teal:      oklch(52% .175 250);
+  --teal-deep: oklch(42% .175 250);
+  --teal-soft: oklch(96% .04  250);
+  --teal-ink:  oklch(38% .175 250);
+  --c-cnn:     oklch(52% .175 250);
+}
+body[data-accent="pizarra"] {
+  --teal:      oklch(48% .055 220);
+  --teal-deep: oklch(38% .055 220);
+  --teal-soft: oklch(94% .016 220);
+  --teal-ink:  oklch(34% .055 220);
+  --c-cnn:     oklch(48% .055 220);
+}
+/* dark + acento */
+[data-theme="dark"] body[data-accent="azul"] {
+  --teal:      oklch(68% .165 250);
+  --teal-deep: oklch(55% .165 250);
+  --teal-soft: oklch(20% .06  250);
+  --teal-ink:  oklch(72% .165 250);
+  --c-cnn:     oklch(68% .165 250);
+}
+[data-theme="dark"] body[data-accent="pizarra"] {
+  --teal:      oklch(62% .045 220);
+  --teal-deep: oklch(50% .045 220);
+  --teal-soft: oklch(18% .02  220);
+  --teal-ink:  oklch(68% .045 220);
+  --c-cnn:     oklch(62% .045 220);
+}
+
+/* ============================================================
+   MICRO-INTERACCIONES — hover states
+   ============================================================ */
+
+/* Agenda items */
+.ag-item {
+  transition: background .14s ease, color .14s ease;
+  border-radius: 6px;
+  margin-inline: -8px;
+  padding-inline: 8px;
+}
+.ag-item:hover { background: var(--surface); }
+.ag-item:hover .ag-t { color: var(--ink); }
+
+/* Arch cards lift */
+.arch-card {
+  transition: transform .22s var(--anim-ease), box-shadow .22s ease;
+}
+.arch-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+/* Spec chips */
+.spec-card {
+  transition: transform .18s var(--anim-ease), box-shadow .18s ease;
+}
+.spec-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+/* Pillar border accent on hover */
+.pillar {
+  transition: border-top-color .18s ease;
+}
+.pillar:hover { border-top-color: var(--rust); }
+
+/* Balance cards */
+.bal-card {
+  transition: transform .2s var(--anim-ease), box-shadow .2s ease;
+}
+.bal-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+/* Three-up cards */
+.tu {
+  transition: transform .2s var(--anim-ease), box-shadow .2s ease;
+}
+.tu:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+/* Conclusion list items — subtle left-shift on hover */
+.concl li {
+  transition: padding-left .15s ease, color .15s ease;
+}
+.concl li:hover { padding-left: 84px; color: var(--ink); }
+
+/* ============================================================
+   THEME TOGGLE BUTTON (lives outside scaled canvas)
+   ============================================================ */
+#theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 60;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  box-shadow: var(--shadow);
+  transition: transform .2s ease, background .3s ease;
+}
+#theme-toggle:hover { transform: scale(1.08); }

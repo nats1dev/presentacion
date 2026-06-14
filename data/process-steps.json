@@ -1,0 +1,25 @@
+{
+  "source": "Tesis/Metodologia.md",
+  "steps": [
+    {
+      "label": "Repositorio publico",
+      "detail": "Imagenes fotograficas de conexiones estructurales de acero con clases corrosion/no_corrosion."
+    },
+    {
+      "label": "Auditoria",
+      "detail": "Control de duplicados exactos, source_key y ausencia de solapamientos entre particiones."
+    },
+    {
+      "label": "Preprocesamiento",
+      "detail": "Resolucion 224 x 224, normalizacion ImageNet y augmentation durante entrenamiento."
+    },
+    {
+      "label": "Entrenamiento",
+      "detail": "CNN propia desde cero y modelos transferidos MobileNetV2 y EfficientNet-B0."
+    },
+    {
+      "label": "Evaluacion",
+      "detail": "Metricas, matrices de confusion, contraste estadistico, GradCAM++ y benchmark GPU."
+    }
+  ]
+}
