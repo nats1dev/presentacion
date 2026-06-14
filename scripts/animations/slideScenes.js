@@ -202,11 +202,11 @@
     var gsap = window.gsap;
     opts = opts || {};
 
-    /* Matar la timeline anterior — nunca acumular tweens entre navegaciones. */
-    if (ns._tl) {
-      ns._tl.progress(1);
-      ns._tl.kill();
-      ns._tl = null;
+    /* Matar la timeline anterior para esta diapositiva específica. */
+    if (slide._tl) {
+      slide._tl.progress(1);
+      slide._tl.kill();
+      slide._tl = null;
     }
 
     var type = animType();
@@ -238,7 +238,7 @@
     };
 
     var tl = gsap.timeline();
-    ns._tl = tl;
+    slide._tl = tl;
 
     var label = slide.getAttribute('data-label') || '';
     var scene = SCENES[label];
@@ -251,7 +251,7 @@
     }
 
     /* Si la timeline quedó vacía (slide sin targets) la descartamos. */
-    if (!tl.getChildren(false, true, true).length) { tl.kill(); ns._tl = null; }
+    if (!tl.getChildren(false, true, true).length) { tl.kill(); slide._tl = null; }
     return tl;
   };
 })();

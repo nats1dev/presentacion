@@ -68,7 +68,7 @@
         /* La diapositiva inicial: si el `slidechange` de init YA se disparó
            antes de enganchar el listener, la reproducimos manualmente; si
            aún no, el propio evento se encargará (evita doble disparo). */
-        var stage = document.querySelector('deck-stage');
+        var stage = document.querySelector('.scroll-root');
         var active = stage && stage.querySelector('[data-deck-active]');
         if (active) ns.playScene(active, { isMobile: cond.isMobile });
 

@@ -79,7 +79,7 @@
   });
 
   window.addEventListener('load', function () {
-    var stage  = document.querySelector('deck-stage');
+    var stage  = document.querySelector('.scroll-root');
     var active = stage && stage.querySelector('[data-deck-active]');
     enhanceSlide(active || (stage && stage.children[0]));
   });

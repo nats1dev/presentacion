@@ -117,20 +117,28 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-deck-stage:not(:defined) { visibility: hidden; }
+.scroll-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
 /* ---- Slide base ---- */
-deck-stage section {
+.scroll-root section {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-serif);
   overflow: hidden;
   transition: background .4s ease, color .4s ease;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .slide {
-  position: absolute;
-  inset: 0;
+  flex: 1;
+  min-height: 100vh;
   padding: var(--pad);
   display: flex;
   flex-direction: column;

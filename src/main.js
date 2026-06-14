@@ -83,7 +83,7 @@ function hydrate(slide) {
 }
 
 function numberFooters() {
-  const sections = document.querySelectorAll('deck-stage > section');
+  const sections = document.querySelectorAll('.scroll-root > section');
   const total = sections.length;
   sections.forEach((sec, i) => {
     const fn = sec.querySelector('.foot-num');
@@ -91,11 +91,15 @@ function numberFooters() {
   });
 }
 
+import { initDeckStage } from '../deck-stage.js';
+
 function hydrateActiveSlide() {
   numberFooters();
-  const stage = document.querySelector('deck-stage');
-  const active = stage && stage.querySelector('[data-deck-active]');
-  hydrate(active || (stage && stage.children[0]));
+  const stage = document.querySelector('.scroll-root');
+  if (stage) {
+    stage.querySelectorAll('section').forEach(sec => hydrate(sec));
+    initDeckStage();
+  }
 }
 
 async function loadLegacyRuntime() {
@@ -109,7 +113,6 @@ async function loadLegacyRuntime() {
   await import('../scripts/w-cnn.js');
   await import('../scripts/theme.js');
   await import('../image-slot.js');
-  await import('../deck-stage.js');
   await import('../scripts/anim-enhance.js');
   await import('../scripts/animations/reducedMotion.js');
   await import('../scripts/animations/transitions.js');
