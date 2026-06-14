@@ -11,10 +11,9 @@
        permanente con JS.
      · gsap.matchMedia() gobierna activación (motion + desktop/mobile)
        y revierte limpiamente al cambiar el ajuste del sistema.
-     · Las animaciones se disparan con el evento `slidechange`, no con
-       scroll. ScrollTrigger se registra de forma centralizada y queda
-       disponible para contenido scrolleable embebido a futuro, pero el
-       deck NO usa scroll (evita scroll-jacking / navegación rota).
+     · Las animaciones se disparan con el evento `slidechange`. En el modo
+       scrolleable, <deck-stage> emite ese evento desde ScrollTrigger al
+       entrar cada diapositiva en vista.
    ------------------------------------------------------------------ */
 (function () {
   'use strict';

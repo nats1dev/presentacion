@@ -2,11 +2,9 @@
    ------------------------------------------------------------------
    Registro de ESCENAS por diapositiva. Cada escena es una secuencia
    (timeline GSAP) que se reproduce cuando la diapositiva se vuelve
-   activa (evento `slidechange` del <deck-stage>).
-
-   Análogo, en un deck sin scroll, a lo que en un sitio scrolleable
-   serían las "scroll scenes": aquí el disparador es la NAVEGACIÓN
-   entre diapositivas, no la posición de scroll.
+   activa (evento `slidechange` del <deck-stage>). En el deck scrolleable,
+   ese evento se emite tanto al navegar por teclado/rail como al entrar una
+   diapositiva en vista mediante ScrollTrigger.
 
    · Las escenas solo referencian SELECTORES de la diapositiva — nunca
      contenido de la tesis hardcodeado.

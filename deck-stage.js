@@ -12,8 +12,8 @@
  *      content are left alone.
  *  (c) press R to reset to slide 0 (with a tasteful keyboard hint).
  *  (d) bottom-center overlay showing slide count + hints, fades out on idle.
- *  (e) auto-scaling — inner canvas is a fixed design size (default 1920×1080)
- *      scaled with `transform: scale()` to fit the viewport, letterboxed.
+ *  (e) scrollable deck layout — each slide occupies a 100vh snap page, while
+ *      the authored 1920×1080 canvas is scaled with GSAP-assisted navigation.
  *      Set the `noscale` attribute to render at authored size (1:1) — the
  *      PPTX exporter sets this so its DOM capture sees unscaled geometry.
  *  (f) print — `@media print` lays every slide out as its own page at the
@@ -35,9 +35,9 @@
  *      structural rail input is locked until the host posts
  *      {__dc_op_ack: true, applied}.
  *
- * Slides are HIDDEN, not unmounted. Non-active slides stay in the DOM with
- * `visibility: hidden` + `opacity: 0`, so their state (videos, iframes,
- * form inputs, React trees) is preserved across navigation.
+ * Slides are kept mounted and visible in a vertical scroll stack. The active
+ * slide is still marked with `data-deck-active` so notes, widgets, thumbnails,
+ * and entrance animations can follow scroll position.
  *
  * Lifecycle event — the component dispatches a `slidechange` CustomEvent on
  * itself whenever the active slide changes (including the initial mount).
@@ -129,8 +129,25 @@
       background: #000;
       color: #fff;
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.24) transparent;
       -webkit-tap-highlight-color: transparent;
+    }
+    :host::-webkit-scrollbar { width: 10px; }
+    :host::-webkit-scrollbar-track { background: #000; }
+    :host::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.24);
+      border-radius: 5px;
+      border: 2px solid #000;
+      background-clip: content-box;
+    }
+    :host::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.34);
+      border: 2px solid #000;
+      background-clip: content-box;
     }
     /* connectedCallback holds this until document.fonts.ready (capped 2s) so
      * the first visible paint has the deck's real typography + final rail
@@ -142,33 +159,47 @@
     :host([data-fonts-pending]) .rail { opacity: 0; pointer-events: none; }
 
     .stage {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .pages {
+      position: relative;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .page {
+      height: 100vh;
+      min-height: 360px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
 
     .canvas {
-      position: relative;
-      transform-origin: center center;
-      flex-shrink: 0;
-      background: #fff;
+      position: absolute;
+      top: 0;
+      transform-origin: top left;
+      background: transparent;
       will-change: transform;
+      z-index: 1;
     }
 
     /* Slides live in light DOM (via <slot>) so authored CSS still applies.
        We absolutely position each slotted child to stack them. */
     ::slotted(*) {
       position: absolute !important;
-      inset: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
+      left: 0 !important;
+      top: var(--deck-slide-y, 0px) !important;
+      width: var(--deck-design-w) !important;
+      height: var(--deck-design-h) !important;
       box-sizing: border-box !important;
       overflow: hidden;
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+      scroll-snap-align: center;
     }
     ::slotted([data-deck-active]) {
       opacity: 1;
@@ -324,7 +355,7 @@
     .rail[data-user-hidden] { transform: translateX(-100%); }
     :host([data-rail-anim]) .rail { transition: transform 200ms cubic-bezier(.3,.7,.4,1); }
     :host([data-rail-anim]) .stage { transition: left 200ms cubic-bezier(.3,.7,.4,1); }
-    :host([data-rail-anim]) .canvas { transition: transform 200ms cubic-bezier(.3,.7,.4,1); }
+    :host([data-rail-anim]) .canvas { transition: left 200ms cubic-bezier(.3,.7,.4,1), transform 200ms cubic-bezier(.3,.7,.4,1); }
     /* transition shorthand replaces rather than merges — repeat the base
        .overlay opacity/transform/filter transitions so visibility changes
        during the 200ms toggle window still fade instead of popping. */
@@ -528,6 +559,8 @@
         color: inherit;
       }
       .stage { position: static; display: block; }
+      .stage { min-height: 0 !important; overflow: visible; }
+      .pages { display: none !important; }
       .canvas {
         transform: none !important;
         width: auto !important;
@@ -582,6 +615,7 @@
       this._onMouseMove = this._onMouseMove.bind(this);
       this._onTap = this._onTap.bind(this);
       this._onMessage = this._onMessage.bind(this);
+      this._onScroll = this._onScroll.bind(this);
       // Capture-phase close so a click anywhere dismisses the menu, but
       // ignore clicks that land inside the menu itself — otherwise the
       // capture handler runs before the menu's own (bubble) handler and
@@ -841,6 +875,7 @@
       window.removeEventListener('click', this._onDocClick, true);
       window.removeEventListener('beforeprint', this._onBeforePrint);
       window.removeEventListener('afterprint', this._onAfterPrint);
+      this.removeEventListener('scroll', this._onScroll);
       if (this._freezeStyle) { this._freezeStyle.remove(); this._freezeStyle = null; }
       this.removeEventListener('click', this._onTap);
       if (this._hideTimer) clearTimeout(this._hideTimer);
@@ -849,6 +884,9 @@
       if (this._tweakTimer) clearTimeout(this._tweakTimer);
       if (this._railAnimTimer) clearTimeout(this._railAnimTimer);
       if (this._scaleRaf) cancelAnimationFrame(this._scaleRaf);
+      if (this._scrollRaf) cancelAnimationFrame(this._scrollRaf);
+      if (this._scrollTween) this._scrollTween.kill();
+      this._teardownScrollTriggers();
       if (this._liveObserver) this._liveObserver.disconnect();
       if (this._railObserver) this._railObserver.disconnect();
       if (this._onTweakChange) window.removeEventListener('tweakchange', this._onTweakChange);
@@ -860,6 +898,8 @@
         this._canvas.style.height = this.designHeight + 'px';
         this._canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
         this._canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+        this.style.setProperty('--deck-design-w', this.designWidth + 'px');
+        this.style.setProperty('--deck-design-h', this.designHeight + 'px');
         if (this._rail) {
           this._rail.style.setProperty('--deck-aspect', this.designWidth + '/' + this.designHeight);
         }
@@ -876,17 +916,22 @@
       const stage = document.createElement('div');
       stage.className = 'stage';
 
+      const pages = document.createElement('div');
+      pages.className = 'pages';
+
       const canvas = document.createElement('div');
       canvas.className = 'canvas';
       canvas.style.width = this.designWidth + 'px';
       canvas.style.height = this.designHeight + 'px';
       canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
       canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+      this.style.setProperty('--deck-design-w', this.designWidth + 'px');
+      this.style.setProperty('--deck-design-h', this.designHeight + 'px');
 
       const slot = document.createElement('slot');
       slot.addEventListener('slotchange', this._onSlotChange);
       canvas.appendChild(slot);
-      stage.appendChild(canvas);
+      stage.append(pages, canvas);
 
       // Overlay: compact, solid black, with clickable controls.
       const overlay = document.createElement('div');
@@ -1008,6 +1053,7 @@
       this._root.append(style, rail, resize, stage, overlay, menu, confirm);
       this._canvas = canvas;
       this._stage = stage;
+      this._pages = pages;
       this._slot = slot;
       this._overlay = overlay;
       this._rail = rail;
@@ -1025,6 +1071,7 @@
       } catch (err) {}
       this._setRailWidth(rw);
       this._syncRailHidden();
+      this.addEventListener('scroll', this._onScroll, { passive: true });
     }
 
     _setRailWidth(px) {
@@ -1076,8 +1123,9 @@
       this._railLock = false;
       this._collectSlides();
       this._restoreIndex();
-      this._applyIndex({ showOverlay: false, broadcast: true, reason: 'init' });
       this._fit();
+      this._setupScrollTriggers();
+      this._applyIndex({ showOverlay: false, broadcast: true, reason: 'init' });
     }
 
     _collectSlides() {
@@ -1099,12 +1147,32 @@
         }
 
         slide.setAttribute('data-deck-slide', String(i));
+        slide.style.setProperty('--deck-design-w', this.designWidth + 'px');
+        slide.style.setProperty('--deck-design-h', this.designHeight + 'px');
       });
 
       if (this._totalEl) this._totalEl.textContent = String(this._slides.length || 1);
       if (this._index >= this._slides.length) this._index = Math.max(0, this._slides.length - 1);
       this._markLastVisible();
+      this._renderScrollPages();
       this._renderRail();
+    }
+
+    _renderScrollPages() {
+      if (!this._pages) return;
+      const total = this._slides.length;
+      while (this._pages.children.length < total) {
+        const page = document.createElement('div');
+        page.className = 'page';
+        this._pages.appendChild(page);
+      }
+      while (this._pages.children.length > total) {
+        this._pages.lastElementChild.remove();
+      }
+      Array.from(this._pages.children).forEach((page, i) => {
+        page.setAttribute('data-page-index', String(i));
+        page.setAttribute('aria-hidden', 'true');
+      });
     }
 
     /** Tag the last non-skipped slide so print CSS can drop its
@@ -1150,7 +1218,7 @@
       }
     }
 
-    _applyIndex({ showOverlay = true, broadcast = true, reason = 'init' } = {}) {
+    _applyIndex({ showOverlay = true, broadcast = true, reason = 'init', scroll = true } = {}) {
       if (!this._slides.length) return;
       const prev = this._prevIndex == null ? -1 : this._prevIndex;
       const curr = this._index;
@@ -1169,6 +1237,7 @@
       // has already restored the user's scroll position and yanking back to
       // current would undo it.
       this._syncRail(reason !== 'mutation');
+      if (scroll) this._scrollToIndex(curr, reason);
 
       if (broadcast) {
         // (1) Legacy: host-window postMessage for speaker-notes renderers.
@@ -1229,12 +1298,17 @@
       // resetTransformSelector can't reach .canvas.style.transform directly.
       if (this.hasAttribute('noscale')) {
         this._canvas.style.transform = 'none';
-        if (stage) stage.style.left = '0';
+        this._canvas.style.left = '0';
+        this._canvas.style.height = (this.designHeight * Math.max(1, this._slides.length || 1)) + 'px';
+        this._slides.forEach((slide, i) => {
+          slide.style.setProperty('--deck-slide-y', (i * this.designHeight) + 'px');
+        });
+        if (stage) stage.style.minHeight = (this.designHeight * Math.max(1, this._slides.length || 1)) + 'px';
         if (this._overlay) this._overlay.style.marginLeft = '0';
+        this._refreshScrollTriggers();
         return;
       }
       const rw = this._railWidth();
-      if (stage) stage.style.left = rw + 'px';
       // Overlay is centred on the viewport via left:50% + translate(-50%);
       // marginLeft shifts the centre by rw/2 so it lands in the middle of
       // the [rw, innerWidth] stage region.
@@ -1242,7 +1316,101 @@
       const vw = window.innerWidth - rw;
       const vh = window.innerHeight;
       const s = Math.min(vw / this.designWidth, vh / this.designHeight);
+      const pageH = vh / s;
+      const padY = Math.max(0, (pageH - this.designHeight) / 2);
+      const total = Math.max(1, this._slides.length || 1);
+
+      this._canvas.style.left = (rw + Math.max(0, (vw - this.designWidth * s) / 2)) + 'px';
+      this._canvas.style.height = (pageH * total) + 'px';
       this._canvas.style.transform = `scale(${s})`;
+      if (stage) stage.style.minHeight = (vh * total) + 'px';
+
+      this._slides.forEach((slide, i) => {
+        slide.style.setProperty('--deck-slide-y', (i * pageH + padY) + 'px');
+      });
+      this._refreshScrollTriggers();
+    }
+
+    _teardownScrollTriggers() {
+      if (!this._scrollTriggers) return;
+      this._scrollTriggers.forEach((trigger) => {
+        if (trigger && typeof trigger.kill === 'function') trigger.kill();
+      });
+      this._scrollTriggers = null;
+    }
+
+    _setupScrollTriggers() {
+      this._teardownScrollTriggers();
+      const ScrollTrigger = window.ScrollTrigger;
+      const gsap = window.gsap;
+      if (!ScrollTrigger || !gsap || !this._pages || !this._slides.length) {
+        return;
+      }
+      try { gsap.registerPlugin(ScrollTrigger); } catch (e) {}
+      this._scrollTriggers = Array.from(this._pages.children).map((page, i) => (
+        ScrollTrigger.create({
+          trigger: page,
+          scroller: this,
+          start: 'top center',
+          end: 'bottom center',
+          onEnter: () => this._activateFromScroll(i),
+          onEnterBack: () => this._activateFromScroll(i),
+        })
+      ));
+      this._refreshScrollTriggers();
+    }
+
+    _refreshScrollTriggers() {
+      const ScrollTrigger = window.ScrollTrigger;
+      if (!ScrollTrigger || !this._scrollTriggers || !this._scrollTriggers.length) return;
+      requestAnimationFrame(() => {
+        this._scrollTriggers.forEach((trigger) => {
+          if (trigger && typeof trigger.refresh === 'function') trigger.refresh();
+        });
+      });
+    }
+
+    _activateFromScroll(i) {
+      if (this._scrollTween && this._scrollTween.isActive && this._scrollTween.isActive()) return;
+      const clamped = Math.max(0, Math.min(this._slides.length - 1, i));
+      if (clamped === this._index) return;
+      this._index = clamped;
+      this._applyIndex({ showOverlay: false, broadcast: true, reason: 'scroll', scroll: false });
+    }
+
+    _onScroll() {
+      if (this._scrollRaf) return;
+      this._scrollRaf = requestAnimationFrame(() => {
+        this._scrollRaf = null;
+        if (!this._slides.length || this._scrollTriggers) return;
+        const vh = Math.max(1, window.innerHeight);
+        this._activateFromScroll(Math.round(this.scrollTop / vh));
+      });
+    }
+
+    _scrollToIndex(i, reason) {
+      if (!this._slides.length || reason === 'scroll') return;
+      const target = Math.max(0, Math.min(this._slides.length - 1, i)) * window.innerHeight;
+      const motionOK = !window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (this._scrollTween) {
+        this._scrollTween.kill();
+        this._scrollTween = null;
+      }
+      if (!window.gsap || !motionOK || reason === 'init' || Math.abs(this.scrollTop - target) < 2) {
+        this.scrollTop = target;
+        this._refreshScrollTriggers();
+        return;
+      }
+      this._scrollTween = window.gsap.to(this, {
+        scrollTop: target,
+        duration: 0.72,
+        ease: 'power2.inOut',
+        overwrite: true,
+        onComplete: () => {
+          this._scrollTween = null;
+          this._refreshScrollTriggers();
+        },
+      });
     }
 
     _onResize() {
@@ -1411,6 +1579,7 @@
       if (!this._slides.length) return;
       const clamped = Math.max(0, Math.min(this._slides.length - 1, i));
       if (clamped === this._index) {
+        this._scrollToIndex(clamped, reason);
         this._flashOverlay();
         return;
       }
@@ -1823,6 +1992,8 @@
       this._squelchSlotChange = true;
       slide.remove();
       this._collectSlides();
+      this._fit();
+      this._setupScrollTriggers();
       this._applyIndex({ showOverlay: true, broadcast: true, reason: 'mutation' });
     }
 
@@ -1838,6 +2009,8 @@
       this._squelchSlotChange = true;
       this.insertBefore(copy, slide.nextSibling);
       this._collectSlides();
+      this._fit();
+      this._setupScrollTriggers();
       this._applyIndex({ showOverlay: true, broadcast: true, reason: 'mutation' });
     }
 
@@ -1877,6 +2050,8 @@
       this._squelchSlotChange = true;
       this.insertBefore(slide, ref);
       this._collectSlides();
+      this._fit();
+      this._setupScrollTriggers();
       this._applyIndex({ showOverlay: false, broadcast: true, reason: 'mutation' });
     }
 

@@ -5,17 +5,17 @@ sobre el sistema CSS existente (`.anim` / `.anim-N` en `styles/deck.css`): si
 GSAP no carga, o el usuario pidió *reducir movimiento*, el deck sigue siendo
 legible y usable con el respaldo CSS o con el contenido estático visible.
 
-## Por qué no hay ScrollTrigger “de scroll”
+## ScrollTrigger y deck scrolleable
 
-El deck usa el componente `<deck-stage>`, que es `position:fixed` y **no tiene
-scroll de página**: las diapositivas se apilan y se alternan con el atributo
-`data-deck-active`, y se navegan por teclado/clic. Por eso el disparador de las
-animaciones es el evento **`slidechange`**, no la posición de scroll.
+El deck usa el componente `<deck-stage>` como viewport scrolleable: las
+diapositivas se apilan en páginas verticales de `100vh`, con snap de scroll, y
+el canvas 1920×1080 se escala para cada viewport. `<deck-stage>` usa
+ScrollTrigger para sincronizar la diapositiva visible con `data-deck-active`.
 
-ScrollTrigger se carga y se **registra de forma centralizada** (cumple el
-requisito de tener los plugins listos en un solo sitio) y queda disponible por
-si en el futuro se incrusta contenido scrolleable dentro de una diapositiva,
-pero el deck **no hace scroll-jacking** ni anima en base a scroll.
+Las escenas siguen escuchando el evento **`slidechange`**. Ese evento se emite
+tanto al navegar con teclado/clic/rail como al hacer scroll hasta una nueva
+diapositiva, de modo que los widgets, notas y animaciones comparten una sola
+fuente de verdad.
 
 ## Archivos
 
@@ -25,6 +25,7 @@ pero el deck **no hace scroll-jacking** ni anima en base a scroll.
 | `transitions.js` | Fábricas de transiciones reutilizables. `ThesisAnim.transitions.enter(tl, els, opts)` construye el stagger de entrada. Solo anima `transform` + `opacity`, y limpia props al terminar. |
 | `slideScenes.js` | Registro de **escenas por diapositiva** (`ThesisAnim.SCENES`) + reproductor `ThesisAnim.playScene(slide, {isMobile})`. Indexa por `data-label`. |
 | `gsapSetup.js` | **Punto de entrada.** Registra plugins, define `gsap.matchMedia()` (motion + desktop/mobile), conecta `slidechange`, cede `.anim` desde CSS y limpia para impresión/PDF. |
+| `deck-stage.js` | Viewport scrolleable del deck. Genera las páginas `100vh`, escala el canvas, anima navegación con GSAP y usa ScrollTrigger para actualizar `data-deck-active`. |
 
 Orden de carga en `index.html` (ya configurado): GSAP core → ScrollTrigger →
 `reducedMotion` → `transitions` → `slideScenes` → `gsapSetup`.
