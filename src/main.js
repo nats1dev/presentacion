@@ -5,7 +5,6 @@ import '../styles/widgets.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import metricsData from '../data/model-metrics.json';
-import deckHtml from './deck.html?raw';
 
 window.gsap = gsap;
 window.ScrollTrigger = ScrollTrigger;
@@ -65,11 +64,6 @@ function loadThesisData() {
   };
 }
 
-function loadDeckMarkup() {
-  const root = document.getElementById('deck-root');
-  root.innerHTML = deckHtml;
-}
-
 function hydrate(slide) {
   if (!slide) return;
   slide.querySelectorAll('[data-widget]').forEach((el) => {
@@ -119,12 +113,10 @@ async function loadLegacyRuntime() {
   await import('../scripts/animations/keywords.js');
   await import('../scripts/animations/slideScenes.js');
   await import('../scripts/animations/gsapSetup.js');
-  await import('../scripts/tweaks.jsx');
 }
 
 async function boot() {
   loadThesisData();
-  loadDeckMarkup();
   await loadLegacyRuntime();
 
   document.addEventListener('slidechange', (e) => hydrate(e.detail.slide));

@@ -1,0 +1,23 @@
+<!-- ============ 21 · INTERPRETABILIDAD ============ -->
+  <section data-label="Interpretabilidad">
+    <div class="slide" data-screen-label="Interpretabilidad">
+      <div class="kicker anim anim-1">Interpretabilidad · GradCAM++</div>
+      <h2 class="title anim anim-2" style="margin-bottom:22px;">¿Mira el modelo <b>la corrosión</b>?</h2>
+      <div class="gc-row anim anim-3">
+        <div class="gc-item">
+          <image-slot id="gradcam-cnn" shape="rounded" radius="14" placeholder="Arrastra GradCAM++ · CNN propia"></image-slot>
+          <div class="gc-cap"><b>CNN propia</b> · mapa de activación</div>
+        </div>
+        <div class="gc-item">
+          <image-slot id="gradcam-mobilenet" shape="rounded" radius="14" placeholder="Arrastra GradCAM++ · MobileNetV2"></image-slot>
+          <div class="gc-cap"><b>MobileNetV2</b> · mapa de activación</div>
+        </div>
+        <div class="gc-item">
+          <image-slot id="gradcam-efficientnet" shape="rounded" radius="14" placeholder="Arrastra GradCAM++ · EfficientNet-B0"></image-slot>
+          <div class="gc-cap"><b>EfficientNet-B0</b> · mapa de activación</div>
+        </div>
+      </div>
+      <p class="gc-note anim anim-4"><b>Trazabilidad auxiliar, no causalidad.</b> GradCAM++ permite revisar si las activaciones coinciden con zonas de deterioro, pero no es una explicación causal ni una validación espacial del daño.</p>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>

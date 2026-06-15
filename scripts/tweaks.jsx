@@ -1,6 +1,5 @@
 /* scripts/tweaks.jsx — Panel de tweaks para la defensa de tesis CNN */
 import React from 'react';
-import * as ReactDOM from 'react-dom/client';
 import {
   useTweaks,
   TweaksPanel,
@@ -16,7 +15,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   theme:     "light"
 }/*EDITMODE-END*/;
 
-function DeckTweaks() {
+export default function DeckTweaks() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const root = document.documentElement;
   const syncedRef = React.useRef(false);
@@ -86,10 +85,3 @@ function DeckTweaks() {
     </TweaksPanel>
   );
 }
-
-(function () {
-  const container = document.createElement("div");
-  container.id = "deck-tweaks-root";
-  document.body.appendChild(container);
-  ReactDOM.createRoot(container).render(<DeckTweaks />);
-})();

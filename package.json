@@ -4,17 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
-    "build": "vite build",
-    "preview": "vite preview --host 127.0.0.1",
+    "dev": "astro dev --host 127.0.0.1",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1",
     "check:js": "bash -lc 'python3.12 scripts/check_js_syntax.py'"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
+    "@astrojs/react": "^5.0.7",
+    "astro": "^6.4.6",
     "gsap": "^3.13.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "vite": "^6.0.0"
-  },
-  "devDependencies": {}
+    "react-dom": "^18.3.1"
+  }
 }

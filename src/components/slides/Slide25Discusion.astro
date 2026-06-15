@@ -1,0 +1,30 @@
+<!-- ============ 22 · DISCUSIÓN ============ -->
+  <section data-label="Discusión">
+    <div class="slide" data-screen-label="Discusión">
+      <div class="kicker anim anim-1">Discusión</div>
+      <h2 class="big-statement anim anim-2" style="font-size:54px; max-width:34ch;">
+        No existe un modelo <b>universalmente superior</b>: depende del costo que más pese.
+      </h2>
+      <div class="balance anim anim-3">
+        <div class="bal-card bal-cnn">
+          <div class="bal-name"><span class="sw" style="background:var(--c-cnn)"></span>CNN propia</div>
+          <div class="bal-when">Si priorizas exactitud, eficiencia y simplicidad</div>
+          <ul class="bal-list">
+            <li>Mayor <b>exactitud (92.88%)</b>, F1 (0.908) y especificidad (0.962)</li>
+            <li>El <b>menor costo</b>: 0.651 ms/img y 6.67 MB</li>
+            <li>Pero <b class="accent-rust">13 falsos negativos</b> de 107 positivos</li>
+          </ul>
+        </div>
+        <div class="bal-card bal-eff">
+          <div class="bal-name"><span class="sw" style="background:var(--c-efficientnet)"></span>EfficientNet-B0</div>
+          <div class="bal-when">Si priorizas minimizar omisiones de corrosión</div>
+          <ul class="bal-list">
+            <li>Solo <b>2 falsos negativos</b> (recall 0.981)</li>
+            <li>Mayor <b>AUC-ROC (0.985)</b></li>
+            <li>Menos falsas alarmas que MobileNetV2 (<b>33 vs. 61</b>), a mayor costo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>

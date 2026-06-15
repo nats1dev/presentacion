@@ -1,0 +1,21 @@
+<!-- ============ 20b · CONTRASTE ESTADÍSTICO · RESULTADOS ============ -->
+  <section data-label="Contraste · Resultados">
+    <div class="slide" data-screen-label="Contraste · Resultados">
+      <div class="kicker anim anim-1">Contraste estadístico · Resultados</div>
+      <h2 class="title anim anim-2" style="margin-bottom:24px;">¿Las diferencias son <b>reales</b>?</h2>
+      <div class="stat-grid anim anim-3">
+        <div class="stat-q">
+          <div class="sq-k">Q de Cochran</div>
+          <div class="sq-v">36.29</div>
+          <div class="sq-p">p = 1.316 × 10⁻⁸ · <b style="color:var(--rust)">Se rechaza H₀</b></div>
+        </div>
+        <ul class="posthoc">
+          <li><span class="ph-pair"><b>CNN propia</b> ↔ <b>MobileNetV2</b></span><span class="ph-detail">80 discordantes · p = 0.000002</span><span class="ph-badge ph-yes">Significativa</span></li>
+          <li><span class="ph-pair"><b>MobileNetV2</b> ↔ <b>EfficientNet-B0</b></span><span class="ph-detail">52 discordantes · p = 0.000002</span><span class="ph-badge ph-yes">Significativa</span></li>
+          <li><span class="ph-pair"><b>CNN propia</b> ↔ <b>EfficientNet-B0</b></span><span class="ph-detail">32 discordantes · p = 0.0375</span><span class="ph-badge ph-no">No significativa · α/3 = 0.0167</span></li>
+        </ul>
+      </div>
+      <p class="eff-note anim anim-4">La exactitud global <b>no separa</b> a la CNN propia de EfficientNet-B0. La selección debe basarse en el <b>criterio técnico priorizado</b>: costo de omisiones vs. falsas alarmas vs. latencia.</p>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>

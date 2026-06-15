@@ -1,0 +1,31 @@
+---
+import Deck from '../components/Deck.astro';
+import DeckTweaks from '../../scripts/tweaks.jsx';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Defensa de tesis · Detección de corrosión con CNN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="deck-root" aria-live="polite">
+      <Deck />
+    </div>
+    <script is:inline type="module">
+      window.__vite_plugin_react_preamble_installed__ = true;
+    </script>
+    <DeckTweaks client:only="react" />
+    <script>
+      import '../main.js';
+    </script>
+  </body>
+</html>

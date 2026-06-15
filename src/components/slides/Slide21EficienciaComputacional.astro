@@ -1,0 +1,26 @@
+<!-- ============ 19 · EFICIENCIA COMPUTACIONAL ============ -->
+  <section data-label="Eficiencia">
+    <div class="slide" data-screen-label="Eficiencia">
+      <div class="kicker anim anim-1">Eficiencia computacional</div>
+      <h2 class="title anim anim-2" style="margin-bottom:24px;">El costo de <b>cada predicción</b></h2>
+      <div class="eff anim anim-3">
+        <div class="eff-head">
+          <span>Modelo</span><span>ms / imagen</span><span>FPS (GPU)</span><span>Parámetros</span><span>Tamaño</span>
+        </div>
+        <div class="eff-row">
+          <span class="er-model"><span class="sw" style="background:var(--c-cnn)"></span>CNN propia</span>
+          <span class="er-v er-best">0.651</span><span class="er-v er-best">1,536</span><span class="er-v er-best">1.75 M</span><span class="er-v er-best">6.67 MB</span>
+        </div>
+        <div class="eff-row">
+          <span class="er-model"><span class="sw" style="background:var(--c-mobilenet)"></span>MobileNetV2</span>
+          <span class="er-v">1.921</span><span class="er-v">521</span><span class="er-v">2.55 M</span><span class="er-v">9.74 MB</span>
+        </div>
+        <div class="eff-row">
+          <span class="er-model"><span class="sw" style="background:var(--c-efficientnet)"></span>EfficientNet-B0</span>
+          <span class="er-v">3.109</span><span class="er-v">322</span><span class="er-v">4.34 M</span><span class="er-v">16.54 MB</span>
+        </div>
+      </div>
+      <p class="eff-note anim anim-4">La CNN propia es <b>~4.8× más rápida</b> que EfficientNet-B0 y la más ligera de las tres.</p>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>

@@ -1,0 +1,65 @@
+<!-- ============ 20 · COCHRAN Q · MÉTODO ============ -->
+  <section data-label="Cochran Q · Método">
+    <div class="slide" data-screen-label="Cochran Q · Método">
+      <div class="kicker anim anim-1">Contraste estadístico · Método</div>
+      <h2 class="title anim anim-2" style="margin-bottom:16px;">Prueba Q de Cochran — <b>¿cómo funciona?</b></h2>
+      <div style="display:flex; gap:36px; flex:1;" class="anim anim-3">
+        <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">¿Qué es?</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Prueba <b style="color:var(--ink)">no paramétrica</b> para comparar proporciones de acierto
+              de <b style="color:var(--ink)">k tratamientos relacionados</b> con resultado
+              <b style="color:var(--ink)">binario</b> (acierto/error). Extensión de McNemar a k > 2.
+            </p>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">¿Por qué aquí?</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Las mismas <b style="color:var(--ink)">267 imágenes</b> son clasificadas por las
+              <b style="color:var(--ink)">3 arquitecturas</b>. Para cada imagen: acertó (1) o falló (0).
+              Tabla de 267 filas × 3 columnas — el diseño que Cochran Q requiere.
+            </p>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Post-hoc</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Si Q es significativa → comparaciones <b style="color:var(--ink)">McNemar por pares</b>
+              con corrección de <b style="color:var(--ink)">Bonferroni</b> (α/3 = 0.0167)
+              para controlar el error tipo I.
+            </p>
+          </div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Hipótesis</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              <b style="color:var(--ink)">H₀:</b> las tres arquitecturas tienen la misma proporción de acierto.
+            </p>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45; margin-top:6px;">
+              <b style="color:var(--ink)">H₁:</b> al menos una difiere significativamente.
+            </p>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Mecánica del estadístico</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Q compara los <b style="color:var(--ink)">totales de aciertos por modelo</b> (G<sub>j</sub>)
+              contra lo esperado bajo H₀, ponderado por cuántos modelos acertaron cada imagen (L<sub>i</sub>).
+            </p>
+            <div style="background:rgba(0,0,0,.06); border-radius:10px; padding:14px 18px; margin-top:10px; font-family:var(--font-mono); font-size:19px; color:var(--ink); text-align:center; line-height:1.6;">
+              Q = (k−1) · [ k·ΣG<sub>j</sub>² − T² ] / [ k·T − ΣL<sub>i</sub>² ]<br>
+              <span style="font-size:15px; color:var(--faint);">Bajo H₀, Q ~ χ²(k−1) = χ²(2)</span>
+            </div>
+          </div>
+          <div style="background:var(--card); border-radius:14px; padding:20px 24px;">
+            <div style="font-family:var(--font-mono); font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin-bottom:6px;">Limitación clave</div>
+            <p style="font-size:20px; color:var(--muted); line-height:1.45;">
+              Evalúa exactitud global con <b style="color:var(--rust)">costo simétrico</b>.
+              No determina cuál modelo es <b style="color:var(--ink)">operativamente más seguro</b>.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span class="foot-title">Detección de corrosión · CNN</span><span class="foot-num"></span></div>
+    </div>
+  </section>
