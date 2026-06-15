@@ -113,6 +113,7 @@ async function loadLegacyRuntime() {
   await import('../scripts/animations/keywords.js');
   await import('../scripts/animations/slideScenes.js');
   await import('../scripts/animations/gsapSetup.js');
+  await import('../scripts/living-background.js');
 }
 
 async function boot() {

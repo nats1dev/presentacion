@@ -75,6 +75,18 @@
   /* Animation control */
   --anim-dur: .62s;
   --anim-ease: cubic-bezier(.16,.84,.3,1);
+
+  --living-a: var(--teal);
+  --living-b: var(--rust);
+  --living-ink: #111817;
+  --living-x: 18%;
+  --living-y: 14%;
+  --living-x2: 78%;
+  --living-y2: 82%;
+  --living-rot: 0deg;
+  --living-shift: 0px;
+  --living-energy: .45;
+  --living-opacity: .3;
 }
 
 [data-theme="dark"] {
@@ -121,11 +133,98 @@ html, body {
   display: flex;
   flex-direction: column;
   width: 100%;
+  isolation: isolate;
+}
+
+.living-bg {
+  position: fixed;
+  inset: -18vmax;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at var(--living-x) var(--living-y), color-mix(in srgb, var(--living-a) 34%, transparent) 0 12%, transparent 34%),
+    radial-gradient(circle at var(--living-x2) var(--living-y2), color-mix(in srgb, var(--living-b) 28%, transparent) 0 10%, transparent 32%),
+    linear-gradient(125deg, color-mix(in srgb, var(--living-ink) 7%, var(--bg)) 0%, var(--bg) 46%, color-mix(in srgb, var(--living-a) 9%, var(--bg)) 100%);
+  opacity: 1;
+  transform: translate3d(var(--living-shift), 0, 0) rotate(var(--living-rot));
+  transform-origin: center;
+  transition:
+    background 900ms ease,
+    transform 1100ms cubic-bezier(.16,.84,.3,1);
+}
+
+.living-bg__field,
+.living-bg__grid,
+.living-bg__beam,
+.living-bg__grain {
+  position: absolute;
+  inset: 0;
+}
+
+.living-bg__field {
+  mix-blend-mode: multiply;
+  opacity: var(--living-opacity);
+  filter: blur(16px) saturate(1.15);
+}
+
+.living-bg__field-a {
+  background:
+    conic-gradient(from calc(var(--living-rot) * -1) at 50% 50%, transparent 0 18%, color-mix(in srgb, var(--living-a) 42%, transparent) 24%, transparent 34% 58%, color-mix(in srgb, var(--living-b) 34%, transparent) 68%, transparent 78% 100%);
+  animation: living-drift-a 18s ease-in-out infinite alternate;
+}
+
+.living-bg__field-b {
+  background:
+    radial-gradient(ellipse at 28% 62%, color-mix(in srgb, var(--living-b) 30%, transparent), transparent 38%),
+    radial-gradient(ellipse at 72% 34%, color-mix(in srgb, var(--living-a) 26%, transparent), transparent 42%);
+  animation: living-drift-b 23s ease-in-out infinite alternate;
+}
+
+.living-bg__grid {
+  opacity: calc(.08 + var(--living-energy) * .08);
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--living-ink) 28%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in srgb, var(--living-ink) 22%, transparent) 1px, transparent 1px);
+  background-size: 92px 92px;
+  mask-image: radial-gradient(circle at center, black 0 58%, transparent 76%);
+  transform: rotate(calc(var(--living-rot) * .08));
+  transition: opacity 700ms ease, transform 1000ms ease;
+}
+
+.living-bg__beam {
+  height: 18vmax;
+  top: 38%;
+  left: -12%;
+  right: -12%;
+  opacity: calc(.12 + var(--living-energy) * .16);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--living-a) 30%, transparent), transparent);
+  transform: rotate(calc(-17deg + var(--living-rot) * .04)) translateY(calc(var(--living-shift) * -.35));
+  transition: opacity 700ms ease, transform 1100ms cubic-bezier(.16,.84,.3,1);
+}
+
+.living-bg__beam-b {
+  top: 54%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--living-b) 22%, transparent), transparent);
+  transform: rotate(calc(19deg + var(--living-rot) * .05)) translateY(calc(var(--living-shift) * .28));
+}
+
+.living-bg__grain {
+  opacity: .12;
+  background-image:
+    radial-gradient(circle, rgba(24,28,27,.18) 0 1px, transparent 1.6px);
+  background-size: 17px 17px;
+  mix-blend-mode: multiply;
+}
+
+body[data-living-tone="critical"] .living-bg__grain {
+  opacity: .18;
 }
 
 /* ---- Slide base ---- */
 .scroll-root section {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 88%, transparent), color-mix(in srgb, var(--bg) 82%, transparent));
   color: var(--ink);
   font-family: var(--font-serif);
   overflow: hidden;
@@ -134,6 +233,31 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.cover,
+.closing {
+  background: var(--bg);
+}
+
+@keyframes living-drift-a {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to { transform: translate3d(3%, 2%, 0) scale(1.08); }
+}
+
+@keyframes living-drift-b {
+  from { transform: translate3d(2%, 3%, 0) scale(1.05); }
+  to { transform: translate3d(-3%, -2%, 0) scale(.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .living-bg,
+  .living-bg__field,
+  .living-bg__beam,
+  .living-bg__grid {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 .slide {
