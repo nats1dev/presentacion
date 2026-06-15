@@ -234,6 +234,13 @@
         o.duration = (o.duration != null ? o.duration : 0.5) * ts;
         o.stagger  = (o.stagger  != null ? o.stagger  : 0.08) * ts;
         return ns.keywords.ignite(tl, els, o);
+      },
+      emphasize: function (tl, targetSlide, o) {
+        if (!ns.keywords || !ns.keywords.emphasize) return tl;
+        o = o || {};
+        o.duration = (o.duration != null ? o.duration : 0.62) * ts;
+        o.stagger  = (o.stagger  != null ? o.stagger  : 0.045) * ts;
+        return ns.keywords.emphasize(tl, targetSlide || slide, o);
       }
     };
 
@@ -249,6 +256,8 @@
       /* Genérico: todos los `.anim` de la slide en orden DOM (= orden .anim-N). */
       ctx.enter(tl, $all(slide, '.anim'), { stagger: 0.085 });
     }
+
+    ctx.emphasize(tl, slide);
 
     /* Si la timeline quedó vacía (slide sin targets) la descartamos. */
     if (!tl.getChildren(false, true, true).length) { tl.kill(); slide._tl = null; }

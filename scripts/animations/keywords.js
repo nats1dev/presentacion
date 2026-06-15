@@ -11,7 +11,9 @@
    · Pensado para texto inline (`<b>`, `<span class="accent-*">`),
      donde animar color es fiable y transform no lo sería.
 
-   Requiere window.gsap. Expone: window.ThesisAnim.keywords.ignite(tl, els, opts)
+   Requiere window.gsap. Expone:
+     window.ThesisAnim.keywords.ignite(tl, els, opts)
+     window.ThesisAnim.keywords.emphasize(tl, slide, opts)
    ------------------------------------------------------------------ */
 (function () {
   'use strict';
@@ -24,6 +26,42 @@
     if (override) return override;
     var host = el.parentElement || el;
     try { return getComputedStyle(host).color; } catch (e) { return 'currentColor'; }
+  }
+
+  function accentGlow(el) {
+    var color = 'var(--teal)';
+    try {
+      var cs = getComputedStyle(el);
+      color = cs.color || color;
+    } catch (e) {}
+    return '0 0 0 rgba(0,0,0,0), 0 0 18px ' + color;
+  }
+
+  function importantTargets(slide, selector) {
+    if (!slide) return [];
+    selector = selector || [
+      '.title b',
+      '.big-statement b',
+      '.col-lead b',
+      '.col-lead .accent-teal',
+      '.col-lead .accent-rust',
+      '.obj-gen-text b',
+      '.obj-list b',
+      '.flist b',
+      '.pillar-t',
+      '.arch-name',
+      '.why-name',
+      '.eff-note b',
+      '.posthoc .ph-pair b',
+      '.gc-note b',
+      '.bal-list b',
+      '.concl b',
+      '.rlf-col h3',
+      '.closing-title b'
+    ].join(',');
+    return Array.prototype.filter.call(slide.querySelectorAll(selector), function (el) {
+      return !el.closest('[data-widget]') && !el.closest('.foot') && !el.closest('.overlay');
+    });
   }
 
   ns.keywords = {
@@ -60,6 +98,52 @@
           clearProps: 'color,opacity'
         }, label + '+=' + (i * stag).toFixed(3));
       });
+      return tl;
+    },
+
+    /**
+     * Subraya narrativamente los textos importantes de una slide.
+     * Mantiene el layout intacto: solo usa transform, color, opacity y sombra.
+     * @param {gsap.core.Timeline} tl
+     * @param {Element} slide
+     * @param {Object} [opts] selector, position, duration, stagger, from
+     */
+    emphasize: function (tl, slide, opts) {
+      if (!slide || !window.gsap) return tl;
+      opts = opts || {};
+      var list = importantTargets(slide, opts.selector);
+      if (!list.length) return tl;
+
+      var dur = opts.duration != null ? opts.duration : 0.62;
+      var stag = opts.stagger != null ? opts.stagger : 0.045;
+      var at = opts.position != null ? opts.position : 0.22;
+      var finalColors = list.map(function (el) {
+        try { return getComputedStyle(el).color; } catch (e) { return 'currentColor'; }
+      });
+
+      window.gsap.set(list, {
+        display: 'inline-block',
+        transformOrigin: '50% 80%'
+      });
+
+      tl.fromTo(list, {
+        color: function (i, el) { return neutralColor(el, opts.from); },
+        opacity: 0.72,
+        y: 5,
+        scale: 0.985,
+        textShadow: '0 0 0 rgba(0,0,0,0)'
+      }, {
+        color: function (i) { return finalColors[i] || 'currentColor'; },
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        textShadow: function (i, el) { return accentGlow(el); },
+        duration: dur,
+        stagger: stag,
+        ease: opts.ease || 'back.out(1.25)',
+        clearProps: 'color,opacity,transform,textShadow,display,transformOrigin'
+      }, at);
+
       return tl;
     }
   };
